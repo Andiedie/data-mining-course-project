@@ -54,12 +54,12 @@ if argvs.algorithm is not None:
     classifiers = [classifiers[index] for index in argvs.algorithm]
 logging.info('classifiers ready: %s' % names)
 
-data = load_svmlight_file('./dataset/t.txt', n_features=201)
+data = load_svmlight_file('./dataset/train.txt', n_features=201)
 logging.info('train data loaded')
 x_train, y_train = shuffle(data[0], data[1])
 x_train = x_train.toarray()
 logging.info('train data shuffled')
-data = load_svmlight_file('./dataset/t.txt', n_features=201)
+data = load_svmlight_file('./dataset/test.txt', n_features=201)
 x_predict = data[0].toarray()
 logging.info('predict data loaded')
 
