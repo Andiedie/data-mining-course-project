@@ -53,9 +53,10 @@ print('classifiers ready', names)
 data = load_svmlight_file('./dataset/train.txt', n_features=201)
 print('train loaded')
 x_train, y_train = shuffle(data[0], data[1])
+x_train = x_train.toarray()
 print('train shuffled')
 data = load_svmlight_file('./dataset/test.txt', n_features=201)
-x_predict = data[0]
+x_predict = data[0].toarray()
 print('predict loaded')
 
 for name, clf in zip(names, classifiers):
