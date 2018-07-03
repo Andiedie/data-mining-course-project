@@ -1,6 +1,7 @@
 import os
 import sys
 import pickle
+import timeit
 import argparse
 import numpy as np
 import pandas as pd
@@ -58,6 +59,7 @@ x_predict = data[0]
 print('predict loaded')
 
 for name, clf in zip(names, classifiers):
+    start = timeit.default_timer()
     model_file = os.path.join('./model', name + '.model')
     print(name, 'fitting')
     clf.fit(x_train.toarray(), y_train)
@@ -74,3 +76,5 @@ for name, clf in zip(names, classifiers):
         index_label='id'
     )
     print(name, 'predict done')
+    end = timeit.default_timer()
+    print(name, 'takes', end - start, 'second')
