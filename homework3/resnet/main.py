@@ -11,7 +11,7 @@ import resnet_model
 import resnet_run_loop
 
 _ORIGIN_SIZE = 350
-_IMAGE_SIZE = 224
+_IMAGE_SIZE = 250
 _NUM_CHANNELS = 3
 _NUM_CLASSES = 8
 _NUM_IMAGES = {
@@ -23,21 +23,20 @@ _NUM_IMAGES = {
 def preprocess_image(image_buffer, is_training):
     image = tf.reshape(tf.image.decode_jpeg(
         image_buffer), [_ORIGIN_SIZE, _ORIGIN_SIZE, _NUM_CHANNELS])
-    image = tf.image.crop_to_bounding_box(image, 80, 50, 250, 250)
 
     if is_training:
+        image = tf.image.crop_to_bounding_box(image, 50, 10, 300, 330)
         image = tf.random_crop(
             image, [_IMAGE_SIZE, _IMAGE_SIZE, _NUM_CHANNELS])
         image = tf.image.random_flip_left_right(image)
-        image = tf.image.random_brightness(image, 0.1)          # 亮度
-        image = tf.image.random_contrast(image, 0.8, 1.2)       # 对比度
-        image = tf.image.random_hue(image, 0.02)                # 色调
-        image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
-        image = tf.cast(image, tf.float32)
+        # image = tf.image.random_brightness(image, 0.1)          # 亮度
+        # image = tf.image.random_contrast(image, 0.8, 1.2)       # 对比度
+        # image = tf.image.random_hue(image, 0.02)                # 色调
+        # image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
     else:
-        image = tf.image.central_crop(image, 0.9)
-        image = tf.image.resize_images(image, [_IMAGE_SIZE, _IMAGE_SIZE])
+        image = tf.image.crop_to_bounding_box(image, 80, 50, 250, 250)
 
+    image = tf.cast(image, tf.float32)
     return image
 
 
