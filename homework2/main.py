@@ -1,8 +1,9 @@
 import os
-import sys
 import pickle
 import timeit
+import logging
 import argparse
+import threading
 import numpy as np
 import pandas as pd
 from sklearn.datasets import load_svmlight_file
@@ -15,9 +16,15 @@ from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
 from sklearn.discriminant_analysis import QuadraticDiscriminantAnalysis
 
+LOG_FORMAT = "[%(asctime)s] [%(levelname)s] - %(message)s"
+logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
+
 parser = argparse.ArgumentParser()
-parser.add_argument('--algorithm', '-algo', default=None, type=int, help='0 <= algorithm <= 9')
-argvs = parser.parse_args(sys.argv[1:])
+parser.add_argument('--algorithm', '-algo', default=None,
+                    type=list, help='0 <= algorithm <= 9')
+parser.add_argument('--thread_count', '-tc', default=3,
+                    type=int, help='thread count')
+argvs = parser.parse_args()
 
 classifiers = [
     KNeighborsClassifier(3),
@@ -27,8 +34,8 @@ classifiers = [
     AdaBoostClassifier(),
     GaussianNB(),
     QuadraticDiscriminantAnalysis(),
-    SVC(kernel="linear", C=0.025),
-    SVC(gamma=2, C=1)
+    SVC(kernel="linear", C=0.025, probability=True),
+    SVC(gamma=2, C=1, probability=True)
 ]
 names = [
     "Nearest Neighbors",
@@ -42,36 +49,37 @@ names = [
     "RBF SVM"
 ]
 if argvs.algorithm is not None:
-    names = [names[argvs.algorithm]]
-    classifiers = [classifiers[argvs.algorithm]]
-print('classifiers ready', names)
+    argvs.algorithm = list(map(int, argvs.algorithm))
+    names = [names[index] for index in argvs.algorithm]
+    classifiers = [classifiers[index] for index in argvs.algorithm]
+logging.info('classifiers ready: %s' % names)
 
-data = load_svmlight_file('./dataset/train.txt', n_features=201)
-print('train loaded')
+data = load_svmlight_file('./dataset/t.txt', n_features=201)
+logging.info('train data loaded')
 x_train, y_train = shuffle(data[0], data[1])
 x_train = x_train.toarray()
-print('train shuffled')
-data = load_svmlight_file('./dataset/test.txt', n_features=201)
+logging.info('train data shuffled')
+data = load_svmlight_file('./dataset/t.txt', n_features=201)
 x_predict = data[0].toarray()
-print('predict loaded')
+logging.info('predict data loaded')
 
 for name, clf in zip(names, classifiers):
     start = timeit.default_timer()
     model_file = os.path.join('./model', name + '.model')
-    print(name, 'fitting')
+    logging.info('%s fitting' % name)
     clf.fit(x_train, y_train)
-    print(name, 'fitted')
+    logging.info('%s fitted' % name)
     pickle.dump(clf, open(model_file, 'wb'))
-    print(name, 'saved')
+    logging.info('%s saved' % name)
     output_file = os.path.join('./output', name + '.model')
-    print(name, 'predicting')
+    logging.info('%s predicting' % name)
     predict = clf.predict_proba(x_predict)
     predict = np.array(predict)
-    pd.Series(predict[:,1]).to_csv(
+    pd.Series(predict[:, 1]).to_csv(
         path=output_file,
         header=['label'],
         index_label='id'
     )
-    print(name, 'predict done')
+    logging.info('%s predict done' % name)
     end = timeit.default_timer()
-    print(name, 'takes', end - start, 'second')
+    logging.info('%s takes %d seconds' % (name, end - start))
