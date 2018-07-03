@@ -59,7 +59,7 @@ for name, clf in zip(names, classifiers):
     start = timeit.default_timer()
     model_file = os.path.join('./model', name + '.model')
     print(name, 'fitting')
-    clf.fit(x_train.toarray(), y_train)
+    clf.fit(x_train, y_train)
     print(name, 'fitted')
     pickle.dump(clf, open(model_file, 'wb'))
     print(name, 'saved')
