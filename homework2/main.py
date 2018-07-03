@@ -10,8 +10,6 @@ from sklearn.utils import shuffle
 from sklearn.neural_network import MLPClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.svm import SVC
-from sklearn.gaussian_process import GaussianProcessClassifier
-from sklearn.gaussian_process.kernels import RBF
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier, AdaBoostClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -22,7 +20,6 @@ parser.add_argument('--algorithm', '-algo', default=None, type=int, help='0 <= a
 argvs = parser.parse_args(sys.argv[1:])
 
 classifiers = [
-    GaussianProcessClassifier(1.0 * RBF(1.0)),
     KNeighborsClassifier(3),
     DecisionTreeClassifier(max_depth=5),
     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
@@ -34,7 +31,6 @@ classifiers = [
     SVC(gamma=2, C=1)
 ]
 names = [
-    "Gaussian Process",
     "Nearest Neighbors",
     "Decision Tree",
     "Random Forest",

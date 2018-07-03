@@ -58,6 +58,6 @@ python main.py
 - `algorithm`, use the specific algorithm, default `None` means using all. 
 
 # Performance
-| |Gaussian Process|Nearest Neighbors|Decision Tree|Random Forest|Neural Net|AdaBoost|Naive Bayes|QDA|Linear SVM|RBF SVM|
-|-|-|-|-|-|-|-|-|-|-|-|
-|AUC|-|-|-|-|-|-|-|-|-|-|
+| |Nearest Neighbors|Decision Tree|Random Forest|Neural Net|AdaBoost|Naive Bayes|QDA|Linear SVM|RBF SVM|
+|-|-|-|-|-|-|-|-|-|-|
+|AUC|-|-|-|-|-|-|-|-|-|
