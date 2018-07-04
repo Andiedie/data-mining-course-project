@@ -48,7 +48,7 @@ id,label
 
 # Run
 ## sklearn
-Use the 10 classification algorithm of `scikit-learn`.
+Use the 9 classification algorithm of `scikit-learn`.
 
 ```bash
 python main.py

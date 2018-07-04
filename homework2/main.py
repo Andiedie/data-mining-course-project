@@ -22,8 +22,6 @@ logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 parser = argparse.ArgumentParser()
 parser.add_argument('--algorithm', '-algo', default=None,
                     type=list, help='0 <= algorithm <= 9')
-parser.add_argument('--thread_count', '-tc', default=3,
-                    type=int, help='thread count')
 argvs = parser.parse_args()
 
 classifiers = [
