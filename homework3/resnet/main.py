@@ -29,10 +29,10 @@ def preprocess_image(image_buffer, is_training):
         image = tf.random_crop(
             image, [_IMAGE_SIZE, _IMAGE_SIZE, _NUM_CHANNELS])
         image = tf.image.random_flip_left_right(image)
-        # image = tf.image.random_brightness(image, 0.1)          # 亮度
-        # image = tf.image.random_contrast(image, 0.8, 1.2)       # 对比度
-        # image = tf.image.random_hue(image, 0.02)                # 色调
-        # image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
+        image = tf.image.random_brightness(image, 0.1)          # 亮度
+        image = tf.image.random_contrast(image, 0.8, 1.2)       # 对比度
+        image = tf.image.random_hue(image, 0.02)                # 色调
+        image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
     else:
         image = tf.image.crop_to_bounding_box(image, 80, 50, 250, 250)
 
