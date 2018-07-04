@@ -383,8 +383,6 @@ def resnet_main(flags, model_function, input_function, shape=None):
             results = []
             for one in predictions:
                 results.append(one['probabilities'])
-                if len(results) > 2:
-                    break
             ten_result.append(results)
         ten_result = np.array(ten_result)
         ten_result = ten_result.sum(0)
