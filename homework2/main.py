@@ -71,7 +71,7 @@ for name, clf in zip(names, classifiers):
     logging.info('%s fitted' % name)
     pickle.dump(clf, open(model_file, 'wb'))
     logging.info('%s saved' % name)
-    output_file = os.path.join('./output', name + '.model')
+    output_file = os.path.join('./output', name + '.csv')
     logging.info('%s predicting' % name)
     predict = clf.predict_proba(x_predict)
     predict = np.array(predict)
