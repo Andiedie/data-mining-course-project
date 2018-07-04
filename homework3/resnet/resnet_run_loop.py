@@ -40,7 +40,7 @@ from utils import logger
 ################################################################################
 def process_record_dataset(dataset, is_training, batch_size, shuffle_buffer,
                            parse_record_fn, num_epochs=1, num_parallel_calls=1,
-                           examples_per_epoch=0, multi_gpu=False):
+                           examples_per_epoch=0, multi_gpu=False, n_crop=None):
     """Given a Dataset with raw records, return an iterator over the records.
 
     Args:
@@ -91,7 +91,7 @@ def process_record_dataset(dataset, is_training, batch_size, shuffle_buffer,
         dataset = dataset.take(batch_size * (total_examples // batch_size))
 
     # Parse the raw records into images and labels
-    dataset = dataset.map(lambda value: parse_record_fn(value, is_training),
+    dataset = dataset.map(lambda value: parse_record_fn(value, is_training, n_crop=n_crop),
                           num_parallel_calls=num_parallel_calls)
 
     dataset = dataset.batch(batch_size)
@@ -369,22 +369,31 @@ def resnet_main(flags, model_function, input_function, shape=None):
         })
 
     if flags.predict:
-        import pandas as pd
         import pickle
-        def input_fn_predict():
-            return input_function('predict', flags.data_dir, flags.batch_size,
-                                  flags.epochs_between_evals,
-                                  flags.num_parallel_calls, flags.multi_gpu)
+        import numpy as np
+        import pandas as pd
+        ten_result = []
+        for i in range(10):
+            def input_fn_predict():
+                return input_function('predict', flags.data_dir, flags.batch_size,
+                                    flags.epochs_between_evals,
+                                    flags.num_parallel_calls, flags.multi_gpu, n_crop=i)
 
-        predictions = classifier.predict(input_fn=input_fn_predict)
-        results = []
+            predictions = classifier.predict(input_fn=input_fn_predict)
+            results = []
+            for one in predictions:
+                results.append(one['probabilities'])
+                if len(results) > 2:
+                    break
+            ten_result.append(results)
+        ten_result = np.array(ten_result)
+        ten_result = ten_result.sum(0)
+        ten_result = np.argmax(ten_result, 1)
         filename = os.path.join(flags.data_dir, 'predict_filenames.pickle')
         files = pickle.load(open(filename, 'rb'))
-        for one in predictions:
-            results.append(one['classes'])
         pd.DataFrame({
             'Image': files,
-            'Cloth_label': results
+            'Cloth_label': ten_result
         }, columns=['Image', 'Cloth_label']).to_csv(flags.predict, index=False)
         return
 

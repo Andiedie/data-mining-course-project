@@ -20,7 +20,8 @@ _NUM_IMAGES = {
     'predict': 0
 }
 
-def preprocess_image(image_buffer, is_training):
+
+def preprocess_image(image_buffer, is_training, n_crop=None):
     image = tf.reshape(tf.image.decode_jpeg(
         image_buffer), [_ORIGIN_SIZE, _ORIGIN_SIZE, _NUM_CHANNELS])
 
@@ -33,14 +34,26 @@ def preprocess_image(image_buffer, is_training):
         image = tf.image.random_contrast(image, 0.8, 1.2)       # 对比度
         image = tf.image.random_hue(image, 0.02)                # 色调
         image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
-    else:
+    elif n_crop is None:
         image = tf.image.crop_to_bounding_box(image, 80, 50, 250, 250)
+    else:
+        ten_crop = [
+            [0, 0, 250, 250],
+            [50, 0, 250, 250],
+            [0, 80, 250, 250],
+            [50, 80, 250, 250],
+            [25, 40, 250, 250]
+        ]
+        bbox = ten_crop[int(n_crop / 2)]
+        image = tf.image.crop_to_bounding_box(image, *bbox)
+        if n_crop % 2 == 1:
+            image = tf.image.flip_left_right(image)
 
     image = tf.cast(image, tf.float32)
     return image
 
 
-def parse_record(raw_record, is_training):
+def parse_record(raw_record, is_training, n_crop=None):
     feature_map = {
         'image': tf.FixedLenFeature([], dtype=tf.string),
         'label': tf.FixedLenFeature([], dtype=tf.int64)
@@ -48,12 +61,12 @@ def parse_record(raw_record, is_training):
     features = tf.parse_single_example(raw_record, feature_map)
     image_buffer = features['image']
     label = tf.one_hot(features['label'], _NUM_CLASSES)
-    image = preprocess_image(image_buffer, is_training)
+    image = preprocess_image(image_buffer, is_training, n_crop=n_crop)
     return image, label
 
 
 def input_fn(mode, data_dir, batch_size, num_epochs=1,
-             num_parallel_calls=1, multi_gpu=False):
+             num_parallel_calls=1, multi_gpu=False, n_crop=None):
     filename = os.path.join(data_dir, mode+'.tfrecord')
     dataset = tf.data.TFRecordDataset(
         [filename], num_parallel_reads=num_parallel_calls)
@@ -63,7 +76,7 @@ def input_fn(mode, data_dir, batch_size, num_epochs=1,
     return resnet_run_loop.process_record_dataset(
         dataset, mode == 'train', batch_size, num_images, parse_record,
         num_epochs, num_parallel_calls, examples_per_epoch=num_images,
-        multi_gpu=multi_gpu)
+        multi_gpu=multi_gpu, n_crop=n_crop)
 
 
 def get_synth_input_fn():
