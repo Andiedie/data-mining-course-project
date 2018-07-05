@@ -24,9 +24,11 @@ _NUM_IMAGES = {
 def preprocess_image(image_buffer, is_training, n_crop=None):
     image = tf.reshape(tf.image.decode_jpeg(
         image_buffer), [_ORIGIN_SIZE, _ORIGIN_SIZE, _NUM_CHANNELS])
+    # 从350x350的图片的靠下部分剪裁出一个300x300的小图，因为图片的上部基本是头
+    image = tf.image.crop_to_bounding_box(image, 50, 25, 300, 300)
 
     if is_training:
-        image = tf.image.crop_to_bounding_box(image, 50, 10, 300, 330)
+        # 从小图中随机剪裁输入
         image = tf.random_crop(
             image, [_IMAGE_SIZE, _IMAGE_SIZE, _NUM_CHANNELS])
         image = tf.image.random_flip_left_right(image)
@@ -35,14 +37,16 @@ def preprocess_image(image_buffer, is_training, n_crop=None):
         image = tf.image.random_hue(image, 0.02)                # 色调
         image = tf.image.random_saturation(image, 0.8, 1.2)     # 饱和度
     elif n_crop is None:
-        image = tf.image.crop_to_bounding_box(image, 75, 50, 250, 250)
+        # 中心剪裁小图作为输入
+        image = tf.image.crop_to_bounding_box(image, 25, 25, 250, 250)
     else:
+        # 小图中10-crop
         ten_crop = [
             [0, 0, 250, 250],
             [50, 0, 250, 250],
-            [0, 80, 250, 250],
-            [50, 80, 250, 250],
-            [25, 40, 250, 250]
+            [0, 50, 250, 250],
+            [50, 50, 250, 250],
+            [25, 25, 250, 250]
         ]
         bbox = ten_crop[int(n_crop / 2)]
         image = tf.image.crop_to_bounding_box(image, *bbox)
