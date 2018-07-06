@@ -60,4 +60,4 @@ python main.py
 # Performance
 | |Nearest Neighbors|Decision Tree|Random Forest|Neural Net|AdaBoost|Naive Bayes|QDA|Linear SVM|RBF SVM|
 |-|-|-|-|-|-|-|-|-|-|
-|AUC|0.80139|0.88573|0.39052|-|0.89311|0.73119|0.49650|-|-|
+|AUC|0.80139|0.88573|0.39052|0.87256|0.89311|0.73119|0.49650|-|-|
