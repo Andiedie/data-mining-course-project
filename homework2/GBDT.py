@@ -47,13 +47,13 @@ clf = GradientBoostingClassifier(
     n_estimators=search.best_params_['n_estimators'],
     learning_rate=search.best_params_['learning_rate']
 )
-logging.info('AdaBoost fitting')
+logging.info('GBDT fitting')
 clf.fit(x_train, y_train)
-logging.info('AdaBoost fitted')
+logging.info('GBDT fitted')
 pickle.dump(clf, open(model_file, 'wb'))
-logging.info('AdaBoost saved')
+logging.info('GBDT saved')
 output_file = './output/GBDT.csv'
-logging.info('AdaBoost predicting')
+logging.info('GBDT predicting')
 predict = clf.predict_proba(x_predict)
 predict = np.array(predict)
 pd.Series(predict[:, 1]).to_csv(
@@ -61,4 +61,4 @@ pd.Series(predict[:, 1]).to_csv(
     header=['label'],
     index_label='id'
 )
-logging.info('AdaBoost predict done')
+logging.info('GBDT predict done')
