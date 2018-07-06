@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn.utils import shuffle
 from sklearn.datasets import load_svmlight_file
-from sklearn.ensemble import AdaBoostClassifier
+from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.model_selection import GridSearchCV
 
 LOG_FORMAT = "[%(asctime)s] [%(levelname)s] - %(message)s"
@@ -22,7 +22,7 @@ x_predict = data[0].toarray()
 logging.info('predict data loaded')
 
 start = timeit.default_timer()
-clf = AdaBoostClassifier()
+clf = GradientBoostingClassifier()
 test_case = {
   'n_estimators': range(180, 300, 10),
   'learning_rate': [
@@ -42,8 +42,8 @@ print('----------best_score----------')
 print(search.best_score_)
 end = timeit.default_timer()
 logging.info('search takes %d seconds' % (end - start))
-model_file = './model/AdaBoost.model'
-clf = AdaBoostClassifier(
+model_file = './model/GBDT.model'
+clf = GradientBoostingClassifier(
     n_estimators=search.best_params_['n_estimators'],
     learning_rate=search.best_params_['learning_rate']
 )
@@ -52,7 +52,7 @@ clf.fit(x_train, y_train)
 logging.info('AdaBoost fitted')
 pickle.dump(clf, open(model_file, 'wb'))
 logging.info('AdaBoost saved')
-output_file = './output/AdaBoost.csv'
+output_file = './output/GBDT.csv'
 logging.info('AdaBoost predicting')
 predict = clf.predict_proba(x_predict)
 predict = np.array(predict)
