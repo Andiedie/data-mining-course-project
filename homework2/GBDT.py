@@ -24,7 +24,7 @@ logging.info('predict data loaded')
 start = timeit.default_timer()
 clf = GradientBoostingClassifier()
 test_case = {
-  'n_estimators': range(180, 300, 10),
+  'n_estimators': range(50, 300, 20),
   'learning_rate': [
     0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9
   ]
