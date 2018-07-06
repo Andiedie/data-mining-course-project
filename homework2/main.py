@@ -29,7 +29,7 @@ classifiers = [
     DecisionTreeClassifier(max_depth=5),
     RandomForestClassifier(max_depth=5, n_estimators=10, max_features=1),
     MLPClassifier(alpha=1),
-    AdaBoostClassifier(),
+    AdaBoostClassifier(n_estimators=180, learning_rate=0.9),
     GaussianNB(),
     QuadraticDiscriminantAnalysis(),
     SVC(kernel="linear", C=0.025, probability=True),
