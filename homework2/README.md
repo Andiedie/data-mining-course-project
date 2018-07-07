@@ -51,13 +51,26 @@ id,label
 Use the 9 classification algorithm of `scikit-learn`.
 
 ```bash
-python main.py
+python sklearn_.py
 ```
 
 ### Options
-- `algorithm`, use the specific algorithm, default `None` means using all. 
+- `algorithm`, use the specific algorithm, default `None` means using all.
+
+## xgboost
+```
+python xgboost_.py
+```
 
 # Performance
-| |Nearest Neighbors|Decision Tree|Random Forest|Neural Net|AdaBoost|Naive Bayes|QDA|Linear SVM|RBF SVM|
-|-|-|-|-|-|-|-|-|-|-|
-|AUC|0.80139|0.88573|0.39052|0.87256|0.89531|0.73119|0.49650|-|-|
+| |Nearest Neighbors|Decision Tree|Random Forest|Neural Net|
+|-|-|-|-|-|
+|AUC|0.80139|0.88573|0.39052|0.87256|
+
+| |AdaBoost|Naive Bayes|QDA|Linear SVM|
+|-|-|-|-|-|
+| |0.89531|0.73119|0.49650|-|
+
+| |RBF SVM|GBDT|xgboost|
+|-|-|-|-|
+| |-|-|0.90236|
