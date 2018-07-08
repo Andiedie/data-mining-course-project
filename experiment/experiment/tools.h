@@ -4,8 +4,12 @@
 #include<utility>
 #include<string>
 #include<Eigen/Dense>
-using namespace std;
-using namespace Eigen;
+#include<iostream>
+using Eigen::VectorXd;
+using Eigen::MatrixXd;
+using std::string;
+using std::pair;
+using std::move;
 
 const int kFeatureNumber = 201;
 const string kTrainFilePath = "D:/Andie/code/data-mining-course-project/homework2/dataset/t.txt";

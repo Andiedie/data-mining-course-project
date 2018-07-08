@@ -1,26 +1,28 @@
 #include "tools.h"
-#include<iostream>
 
 pair<MatrixXd, VectorXd> TrainData() {
-	ifstream file(kTrainFilePath.c_str());
-	int rows = count(istreambuf_iterator<char>(file), istreambuf_iterator<char>(), '\n');
-	MatrixXd x(rows, kFeatureNumber);
+	// read train data
+	// add a column of ones to the feature (bias/intercept term)
+	std::ifstream file(kTrainFilePath.c_str());
+	int rows = std::count(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), '\n');
+	MatrixXd x(rows, kFeatureNumber + 1);
 	VectorXd y(rows);
 	file.seekg(0, file.beg);
 	string line;
 	rows = 0;
 	while (getline(file, line)) {
-		istringstream iss(line);
+		std::istringstream iss(line);
 		string data;
 		iss >> data;
 		y(rows) = stod(data);
-		VectorXd row = VectorXd::Zero(kFeatureNumber);
+		VectorXd row = VectorXd::Zero(kFeatureNumber + 1);
 		while (iss >> data) {
 			size_t pos = data.find(':');
-			int index = stoi(data.substr(0, pos)) - 1;
+			int index = stoi(data.substr(0, pos));
 			double value = stod(data.substr(pos + 1));
 			row(index) = value;
 		}
+		row(0) = 1.0;
 		x.row(rows) = row;
 		rows++;
 	}
@@ -28,21 +30,22 @@ pair<MatrixXd, VectorXd> TrainData() {
 }
 
 MatrixXd TestData() {
-	ifstream file(kTestFilePath.c_str());
-	int rows = count(istreambuf_iterator<char>(file), istreambuf_iterator<char>(), '\n');
-	cout << rows << endl;
-	MatrixXd x(rows, kFeatureNumber);
+	// read train data
+	// add a column of ones to the feature (bias/intercept term)
+	std::ifstream file(kTestFilePath.c_str());
+	int rows = std::count(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), '\n');
+	MatrixXd x(rows, kFeatureNumber + 1);
 	file.seekg(0, file.beg);
 	string line;
 	rows = 0;
 	while (getline(file, line)) {
-		istringstream iss(line);
+		std::istringstream iss(line);
 		string data;
 		iss >> data;
-		VectorXd row = VectorXd::Zero(kFeatureNumber);
+		VectorXd row = VectorXd::Zero(kFeatureNumber + 1);
 		while (iss >> data) {
 			size_t pos = data.find(':');
-			int index = stoi(data.substr(0, pos)) - 1;
+			int index = stoi(data.substr(0, pos));
 			double value = stod(data.substr(pos + 1));
 			row(index) = value;
 		}

@@ -4,7 +4,7 @@ import dataset_util
 import pandas as pd
 import pickle
 
-_TRAIN_RATE = 1
+_TRAIN_RATE = 0.9
 
 def make_example(filename, label):
     with tf.gfile.GFile(filename, 'rb') as fid:
