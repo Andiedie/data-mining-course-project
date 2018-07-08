@@ -15,12 +15,25 @@ train_index = indices[bound_index:]
 dvalidate = dtrain_.slice(validation_index)
 dtrain = dtrain_.slice(train_index)
 
-param = {'objective': 'binary:logistic'}
+param = {
+    'objective': 'binary:logistic',
+    'eval_metric': 'auc'
+}
 
-bst = xgb.train(param, dtrain, num_boost_round=10000, evals=[
-                (dvalidate, 'eval')], early_stopping_rounds=100)
+bst = xgb.train(
+    params=param,
+    dtrain=dtrain,
+    num_boost_round=10000,
+    evals=[(dvalidate, 'eval')],
+    early_stopping_rounds=100,
+    maximize=True
+)
 
-bst = xgb.train(param, dtrain_, num_boost_round=bst.best_iteration)
+bst = xgb.train(
+    params=param,
+    dtrain=dtrain_,
+    num_boost_round=bst.best_iteration
+)
 
 result = bst.predict(dtest)
 pd.Series(result).to_csv(
