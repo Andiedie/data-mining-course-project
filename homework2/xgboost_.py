@@ -6,7 +6,7 @@ dtest = xgb.DMatrix('./dataset/test.txt')
 dtrain_ = xgb.DMatrix('./dataset/train.txt')
 
 rows = dtrain_.num_row()
-validation_rate = 0.08
+validation_rate = 0.1
 indices = list(range(0, rows))
 random.shuffle(indices)
 bound_index = int(rows * validation_rate)
