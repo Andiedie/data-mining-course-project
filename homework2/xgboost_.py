@@ -25,15 +25,16 @@ bst = xgb.train(
     dtrain=dtrain,
     num_boost_round=10000,
     evals=[(dvalidate, 'eval')],
-    early_stopping_rounds=100,
+    early_stopping_rounds=5,
     maximize=True
 )
 
-bst = xgb.train(
-    params=param,
-    dtrain=dtrain_,
-    num_boost_round=bst.best_iteration
-)
+# param['slient'] = 1
+# bst = xgb.train(
+#     params=param,
+#     dtrain=dtrain_,
+#     num_boost_round=bst.best_iteration
+# )
 
 result = bst.predict(dtest)
 pd.Series(result).to_csv(
