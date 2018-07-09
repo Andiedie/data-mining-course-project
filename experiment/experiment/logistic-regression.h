@@ -1,5 +1,5 @@
 #pragma once
-#include<Eigen/Dense>
+#include<Eigen/Core>
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
 
@@ -7,17 +7,24 @@ class LogisticRegression {
 private:
 	double learning_rate_;
 	int train_epochs_;
+	double regularization_parameter_;
 	VectorXd theta_;
 public:
 	LogisticRegression();
+	LogisticRegression(double learning_rate, double regularization_parameter, int train_epoch);
+
 	double learning_rate() const;
-	void set_learning_rate(double learning_rate);
+	void learning_rate(double learning_rate);
 	int train_epochs() const;
-	void set_train_epochs(int train_epochs);
+	void train_epochs(int train_epochs);
+	double regularization_parameter() const;
+	void regularization_parameter(double regularization_parameter);
+
 	void SerialTrain(const MatrixXd & x, const VectorXd & y);
 	void ParallelTrain(const MatrixXd & x, const VectorXd & y);
-	VectorXd PredictProbability(VectorXd & x) const;
-	int Predict(VectorXd & x) const;
+
+	VectorXd PredictProbability(MatrixXd & x) const;
 private:
-	VectorXd Sigmoid(VectorXd & v) const;
+	static double Sigmoid(double x);
+	void regularize(VectorXd & gradient);
 };

@@ -20,12 +20,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="logistic-regression.h" />
-    <ClInclude Include="tools.h" />
+    <ClInclude Include="io.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="logistic-regression.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="tools.cpp" />
+    <ClCompile Include="io.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
