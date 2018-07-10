@@ -82,5 +82,5 @@ high_resolution_clock::time_point logging::CreateBeacon() {
 void logging::LogTime(high_resolution_clock::time_point beacon, const char* name, Level level) {
 	auto now = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(now - beacon).count();
-	Log(level) << name << " takes " << duration << " ms";
+	Log(level) << name << " takes " << duration << " ms\n";
 }
