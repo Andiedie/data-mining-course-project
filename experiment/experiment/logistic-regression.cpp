@@ -55,7 +55,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
 		theta_ -= learning_rate_ * gradient;
-		logging::LogTime(beacon, "serail training one epoch", logging::Level::kDebug);
+		logging::LogTime(beacon, "training this epoch", logging::Level::kDebug);
 	}
 }
 
@@ -91,7 +91,7 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
 		theta_ -= learning_rate_ * gradient;
-		logging::LogTime(beacon, "parallel training one epoch", logging::Level::kDebug);
+		logging::LogTime(beacon, "training this epoch", logging::Level::kDebug);
 	}
 }
 
