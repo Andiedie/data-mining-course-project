@@ -30,12 +30,6 @@ std::pair<MatrixXd, VectorXd> load_csv(const char *filename, const int row, cons
 }
 
 int main() {
-	logging::level(logging::Level::kInfo);
-	logging::debug() << "test\n";
-	logging::info() << "test\n";
-	logging::warn() << "test\n";
-	logging::error() << "test\n";
-	return 0;
 	//auto train = TrainData();
 	auto train = load_csv("D:/Download/train.csv", 559, 30);
 	LogisticRegression lr;

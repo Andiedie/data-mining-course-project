@@ -1,9 +1,8 @@
 #pragma once
 #include<Eigen/Core>
-#include<thread>
+#include<omp.h>
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
-using std::thread;
 
 class LogisticRegression {
 private:
