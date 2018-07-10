@@ -4,6 +4,7 @@
 #include<ctime>
 #include<iomanip>
 using logging::Level;
+using namespace std::chrono;
 
 const char* LevelName(Level level) {
 	switch (level) {
@@ -38,23 +39,23 @@ void logging::level(Level level) {
 	level_ = level;
 }
 
-std::ostream & logging::debug() {
-	return log(Level::kDebug);
+std::ostream & logging::Debug() {
+	return Log(Level::kDebug);
 }
 
-std::ostream & logging::info() {
-	return log(Level::kInfo);
+std::ostream & logging::Info() {
+	return Log(Level::kInfo);
 }
 
-std::ostream & logging::warn() {
-	return log(Level::kWarn);
+std::ostream & logging::Warn() {
+	return Log(Level::kWarn);
 }
 
-std::ostream & logging::error() {
-	return log(Level::kError);
+std::ostream & logging::Error() {
+	return Log(Level::kError);
 }
 
-std::ostream & logging::log(Level level) {
+std::ostream & logging::Log(Level level) {
 	if (level >= level_) {
 		auto raw_time = std::time(nullptr);
 		std::tm time_info{};
@@ -72,4 +73,14 @@ std::ostream & logging::log(Level level) {
 		return out_;
 	}
 	return null_stream;
+}
+
+high_resolution_clock::time_point logging::CreateBeacon() {
+	return high_resolution_clock::now();
+}
+
+void logging::LogTime(high_resolution_clock::time_point beacon, const char* name, Level level) {
+	auto now = high_resolution_clock::now();
+	auto duration = duration_cast<microseconds>(now - beacon).count();
+	Log(level) << name << " takes " << duration << " ms";
 }

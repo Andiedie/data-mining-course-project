@@ -45,7 +45,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 	theta_.setZero(num_features);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
-		
+		logging::Debug() << "serial training epoch " << epoch << "\n";
 		VectorXd gradient = VectorXd::Zero(num_features);
 		for (size_t i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
@@ -65,8 +65,9 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 	std::vector<VectorXd> gradient_result(num_examples);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
+		logging::Debug() << "parallel training epoch " << epoch << "\n";
 		VectorXd gradient = VectorXd::Zero(num_features);
-		
+
 #pragma omp parallel for
 		for (int i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
