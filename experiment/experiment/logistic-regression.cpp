@@ -45,7 +45,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 	theta_.setZero(num_features);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
-		logging::Debug() << "serial training epoch " << epoch << "\n";
+		logging::Debug() << "serial training epoch " << epoch;
 		VectorXd gradient = VectorXd::Zero(num_features);
 		auto beacon = logging::CreateBeacon();
 		for (size_t i = 0; i < num_examples; i++) {
@@ -66,8 +66,11 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 
 	std::vector<VectorXd> gradient_result(num_examples);
 
+	logging::Debug() << "max threads: " << omp_get_max_threads();
+	logging::Debug() << "num procs: " << omp_get_num_procs();
+
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
-		logging::Debug() << "parallel training epoch " << epoch << "\n";
+		logging::Debug() << "parallel training epoch " << epoch;
 		VectorXd gradient = VectorXd::Zero(num_features);
 		auto beacon = logging::CreateBeacon();
 #pragma omp parallel for
@@ -89,6 +92,7 @@ VectorXd LogisticRegression::PredictProbability(MatrixXd &x) const {
 }
 
 double LogisticRegression::Sigmoid(double x) {
+	//return pow(sqrt(sqrt(sqrt(pow(1.0 / (1.0 + std::exp(-x)), 2)))), 4);
 	return 1.0 / (1.0 + std::exp(-x));
 }
 

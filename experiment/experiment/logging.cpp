@@ -69,7 +69,7 @@ std::ostream & logging::Log(Level level) {
 		time_info = *std::localtime(&raw_time);
 #endif
 		auto time = std::put_time(&time_info, "%Y-%m-%d %H:%M:%S");
-		out_ << time << " [" << LevelName(level) << "] ";
+		out_ << "\n" << time << " [" << LevelName(level) << "] ";
 		return out_;
 	}
 	return null_stream;
@@ -82,5 +82,5 @@ high_resolution_clock::time_point logging::CreateBeacon() {
 void logging::LogTime(high_resolution_clock::time_point beacon, const char* name, Level level) {
 	auto now = high_resolution_clock::now();
 	auto duration = duration_cast<microseconds>(now - beacon).count();
-	Log(level) << name << " takes " << duration << " ms\n";
+	Log(level) << name << " takes " << duration << " ms";
 }
