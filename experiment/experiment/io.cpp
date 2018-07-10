@@ -1,36 +1,49 @@
+#define _CRT_SECURE_NO_WARNINGS
 #include "io.h"
 #include<fstream>
-#include<sstream>
 #include<string>
+#include<streambuf>
+#include<omp.h>
+#include<vector>
 using std::pair;
 using std::string;
+using std::istreambuf_iterator;
 using Eigen::MatrixXd;
 using Eigen::VectorXd;
 
 pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 	std::ifstream file(kTrainFilePath);
-	size_t rows = std::count(std::istreambuf_iterator<char>(file), std::istreambuf_iterator<char>(), '\n');
+	string line;
+	std::vector<string> lines;
+	while (getline(file, line)) {
+		lines.push_back(move(line));
+		//if (lines.size() >= 15) break;
+	}
+	file.close();
+	size_t rows = lines.size();
 	MatrixXd x = MatrixXd::Zero(rows, kFeatureNumber + 1);
 	VectorXd y;
 	if (is_training) y.setZero(rows);
-	file.seekg(0, file.beg);
-	string line;
-	rows = 0;
-	while (getline(file, line)) {
-		std::istringstream iss(line);
-		string data;
-		iss >> data;
-		if (is_training) y(rows) = stod(data);
-		x(rows, 0) = 1.0;
-		while (iss >> data) {
-			size_t pos = data.find(':');
-			int index = stoi(data.substr(0, pos));
-			double value = stod(data.substr(pos + 1));
-			x(rows, index) = value;
+	
+ #pragma omp parallel for
+	for (int row = 0; row < rows; row++) {
+		const char *data = lines[row].c_str();
+		int remain = int(lines[row].length());
+		int label;
+		int offset;
+		sscanf(data, "%d%n", &label, &offset);
+		data += offset;
+		if (is_training) y(row) = double(label);
+		int index;
+		double value;
+		x(row, 0) = 1.0;
+		while (remain >= 0) {
+			sscanf(data, "%d:%lf%n", &index, &value, &offset);
+			remain -= offset;
+			data += offset;
+			x(row, index) = value;
 		}
-		rows++;
 	}
-	file.close();
 	return pair<MatrixXd, VectorXd>(std::move(x), std::move(y));
 }
 
