@@ -21,7 +21,7 @@
     <ClInclude Include="io.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="logger.h">
+    <ClInclude Include="logging.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -35,7 +35,7 @@
     <ClCompile Include="io.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="logger.cpp">
+    <ClCompile Include="logging.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
