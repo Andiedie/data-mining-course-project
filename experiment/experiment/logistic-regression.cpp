@@ -52,7 +52,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
 			gradient += gradient_i;
 		}
-		logging::LogTime(beacon, "serail training one epoch");
+		logging::LogTime(beacon, "serail training one epoch", logging::Level::kDebug);
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
 		theta_ -= learning_rate_ * gradient;
@@ -64,21 +64,27 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 	size_t num_features = x.cols();
 	theta_.setZero(num_features);
 
-	std::vector<VectorXd> gradient_result(num_examples);
-
-	logging::Debug() << "max threads: " << omp_get_max_threads();
-	logging::Debug() << "num procs: " << omp_get_num_procs();
+	auto num_procs = omp_get_num_procs();
+	std::vector<VectorXd> gradient_result(num_procs);
+	std::vector<size_t> iters(num_procs);
+	size_t section = num_examples / num_procs;
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
 		logging::Debug() << "parallel training epoch " << epoch;
+
+		for (auto &item : gradient_result) item.setZero(num_features);
+
 		VectorXd gradient = VectorXd::Zero(num_features);
 		auto beacon = logging::CreateBeacon();
+
 #pragma omp parallel for
-		for (int i = 0; i < num_examples; i++) {
-			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
-			gradient_result[i] = gradient_i;
+		for (int i = 0; i < num_procs; i++) {
+			for (iters[i] = i * section; iters[i] < (i + 1) * section && iters[i] < num_examples; iters[i]++) {
+				auto gradient_i = (Sigmoid(x.row(iters[i]) * theta_) - y(iters[i])) * x.row(iters[i]);
+				gradient_result[i] += gradient_i;
+			}
 		}
-		logging::LogTime(beacon, "parallel training one epoch");
+		logging::LogTime(beacon, "parallel training one epoch", logging::Level::kDebug);
 		gradient = std::accumulate(gradient_result.begin(), gradient_result.end(), gradient);
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
