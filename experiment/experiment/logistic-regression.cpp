@@ -1,4 +1,10 @@
 #include"logistic-regression.h"
+#include"logging.h"
+#include<vector>
+#include<omp.h>
+#include<numeric>
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
 LogisticRegression::LogisticRegression() {
 	learning_rate_ = 0.001;
@@ -39,6 +45,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 	theta_.setZero(num_features);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
+		
 		VectorXd gradient = VectorXd::Zero(num_features);
 		for (size_t i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
@@ -53,10 +60,22 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 	size_t num_examples = x.rows();
 	size_t num_features = x.cols();
-	size_t num_thread = thread::hardware_concurrency();
 	theta_.setZero(num_features);
 
+	std::vector<VectorXd> gradient_result(num_examples);
+
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
+		VectorXd gradient = VectorXd::Zero(num_features);
+		
+#pragma omp parallel for
+		for (int i = 0; i < num_examples; i++) {
+			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
+			gradient_result[i] = gradient_i;
+		}
+		gradient = std::accumulate(gradient_result.begin(), gradient_result.end(), gradient);
+		regularize(gradient);
+		gradient *= 1.0 / num_examples;
+		theta_ -= learning_rate_ * gradient;
 	}
 }
 

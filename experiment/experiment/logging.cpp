@@ -1,4 +1,8 @@
-#include "logger.h"
+#include "logging.h"
+#include<mutex>
+#include<iostream>
+#include<ctime>
+#include<iomanip>
 using logging::Level;
 
 const char* LevelName(Level level) {

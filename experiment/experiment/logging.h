@@ -1,8 +1,5 @@
 #pragma once
-#include<iostream>
-#include<ctime>
-#include<iomanip>
-#include<mutex>
+#include<ostream>
 
 namespace logging {
 	enum Level {

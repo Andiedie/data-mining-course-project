@@ -1,4 +1,11 @@
 #include "io.h"
+#include<fstream>
+#include<sstream>
+#include<string>
+using std::pair;
+using std::string;
+using Eigen::MatrixXd;
+using Eigen::VectorXd;
 
 pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 	std::ifstream file(kTrainFilePath);
@@ -24,7 +31,7 @@ pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 		rows++;
 	}
 	file.close();
-	return pair<MatrixXd, VectorXd>(move(x), move(y));
+	return pair<MatrixXd, VectorXd>(std::move(x), std::move(y));
 }
 
 pair<MatrixXd, VectorXd> TrainData() {

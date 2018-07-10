@@ -1,8 +1,10 @@
 #include<iostream>
+#include<fstream>
 #include"io.h"
 #include"logistic-regression.h"
-#include"logger.h"
+#include"logging.h"
 using namespace std;
+using namespace Eigen;
 
 std::pair<MatrixXd, VectorXd> load_csv(const char *filename, const int row, const int col) {
 	MatrixXd data(row, col + 1);
