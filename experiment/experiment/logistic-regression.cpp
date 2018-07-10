@@ -1,6 +1,4 @@
 #include"logistic-regression.h"
-#include<iostream>
-using namespace std;
 
 LogisticRegression::LogisticRegression() {
 	learning_rate_ = 0.001;
@@ -41,7 +39,6 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 	theta_.setZero(num_features);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
-		cout << "epoch " << epoch << endl;
 		VectorXd gradient = VectorXd::Zero(num_features);
 		for (size_t i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
@@ -54,11 +51,18 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 }
 
 void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
+	size_t num_examples = x.rows();
+	size_t num_features = x.cols();
+	size_t num_thread = thread::hardware_concurrency();
+	theta_.setZero(num_features);
+
+	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
+	}
 }
 
 VectorXd LogisticRegression::PredictProbability(MatrixXd &x) const {
 	VectorXd result = (x * theta_).unaryExpr(std::ptr_fun(LogisticRegression::Sigmoid));
-	return move(result);
+	return std::move(result);
 }
 
 double LogisticRegression::Sigmoid(double x) {

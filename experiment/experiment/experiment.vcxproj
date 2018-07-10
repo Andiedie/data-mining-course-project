@@ -19,10 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="logger.h" />
     <ClInclude Include="logistic-regression.h" />
     <ClInclude Include="io.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="logger.cpp" />
     <ClCompile Include="logistic-regression.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="io.cpp" />

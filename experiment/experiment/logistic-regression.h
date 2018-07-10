@@ -1,7 +1,9 @@
 #pragma once
 #include<Eigen/Core>
+#include<thread>
 using Eigen::VectorXd;
 using Eigen::MatrixXd;
+using std::thread;
 
 class LogisticRegression {
 private:
