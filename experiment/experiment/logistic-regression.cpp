@@ -46,16 +46,16 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
 		logging::Debug() << "serial training epoch " << epoch;
-		VectorXd gradient = VectorXd::Zero(num_features);
 		auto beacon = logging::CreateBeacon();
+		VectorXd gradient = VectorXd::Zero(num_features);
 		for (size_t i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
 			gradient += gradient_i;
 		}
-		logging::LogTime(beacon, "serail training one epoch", logging::Level::kDebug);
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
 		theta_ -= learning_rate_ * gradient;
+		logging::LogTime(beacon, "serail training one epoch", logging::Level::kDebug);
 	}
 }
 
@@ -63,32 +63,35 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
 	size_t num_examples = x.rows();
 	size_t num_features = x.cols();
 	theta_.setZero(num_features);
+	VectorXd gradient = VectorXd::Zero(num_features);
 
-	auto num_procs = omp_get_num_procs();
-	std::vector<VectorXd> gradient_result(num_procs);
-	std::vector<size_t> iters(num_procs);
-	size_t section = num_examples / num_procs;
+	auto num_processors = omp_get_num_procs();
+	size_t section_size = num_examples / num_processors;
+	std::vector<VectorXd> partial_gradient(num_processors);
+	std::vector<size_t> iterator(num_processors);
 
 	for (size_t epoch = 0; epoch < train_epochs_; epoch++) {
 		logging::Debug() << "parallel training epoch " << epoch;
-
-		for (auto &item : gradient_result) item.setZero(num_features);
-
-		VectorXd gradient = VectorXd::Zero(num_features);
 		auto beacon = logging::CreateBeacon();
 
+		gradient.setZero(num_features);
+		for (auto &item : partial_gradient) item.setZero(num_features);
+		
 #pragma omp parallel for
-		for (int i = 0; i < num_procs; i++) {
-			for (iters[i] = i * section; iters[i] < (i + 1) * section && iters[i] < num_examples; iters[i]++) {
-				auto gradient_i = (Sigmoid(x.row(iters[i]) * theta_) - y(iters[i])) * x.row(iters[i]);
-				gradient_result[i] += gradient_i;
+		for (int i = 0; i < num_processors; i++) {
+			size_t &j = iterator[i];
+			size_t left_bound = i * section_size;
+			size_t right_bound = std::min((i + 1) * section_size, num_examples);
+			for (j = left_bound; j < right_bound; j++) {
+				auto gradient_row = (Sigmoid(x.row(j) * theta_) - y(j)) * x.row(j);
+				partial_gradient[i] += gradient_row;
 			}
 		}
-		logging::LogTime(beacon, "parallel training one epoch", logging::Level::kDebug);
-		gradient = std::accumulate(gradient_result.begin(), gradient_result.end(), gradient);
+		gradient = std::accumulate(partial_gradient.begin(), partial_gradient.end(), gradient);
 		regularize(gradient);
 		gradient *= 1.0 / num_examples;
 		theta_ -= learning_rate_ * gradient;
+		logging::LogTime(beacon, "parallel training one epoch", logging::Level::kDebug);
 	}
 }
 
