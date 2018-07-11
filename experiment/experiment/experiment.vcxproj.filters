@@ -24,6 +24,9 @@
     <ClInclude Include="logging.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="parser.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="logistic-regression.cpp">
@@ -36,6 +39,9 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="logging.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="parser.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

@@ -22,12 +22,14 @@
     <ClInclude Include="logging.h" />
     <ClInclude Include="logistic-regression.h" />
     <ClInclude Include="io.h" />
+    <ClInclude Include="parser.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="logging.cpp" />
     <ClCompile Include="logistic-regression.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="io.cpp" />
+    <ClCompile Include="parser.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>15.0</VCProjectVersion>
