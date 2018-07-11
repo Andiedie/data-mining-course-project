@@ -102,7 +102,6 @@ VectorXd LogisticRegression::PredictProbability(MatrixXd &x) const {
 }
 
 double LogisticRegression::Sigmoid(double x) {
-	//return pow(sqrt(sqrt(sqrt(pow(1.0 / (1.0 + std::exp(-x)), 2)))), 4);
 	return 1.0 / (1.0 + std::exp(-x));
 }
 
