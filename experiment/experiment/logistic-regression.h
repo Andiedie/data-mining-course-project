@@ -18,8 +18,8 @@ public:
 	double regularization_parameter() const;
 	void regularization_parameter(double regularization_parameter);
 
-	void SerialTrain(const Eigen::MatrixXd & x, const Eigen::VectorXd & y);
-	void ParallelTrain(const Eigen::MatrixXd & x, const Eigen::VectorXd & y);
+	void SerialTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y);
+	void ParallelTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y);
 
 	Eigen::VectorXd PredictProbability(Eigen::MatrixXd & x) const;
 private:

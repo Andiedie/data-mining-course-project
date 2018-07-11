@@ -4,6 +4,7 @@
 #include<omp.h>
 #include<numeric>
 using Eigen::MatrixXd;
+using Eigen::VectorXi;
 using Eigen::VectorXd;
 
 LogisticRegression::LogisticRegression() {
@@ -39,7 +40,7 @@ void LogisticRegression::regularization_parameter(double regularization_paramete
 	this->regularization_parameter_ = regularization_parameter;
 }
 
-void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
+void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXi &y) {
 	size_t num_examples = x.rows();
 	size_t num_features = x.cols();
 	theta_.setZero(num_features);
@@ -59,7 +60,7 @@ void LogisticRegression::SerialTrain(const MatrixXd &x, const VectorXd &y) {
 	}
 }
 
-void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXd &y) {
+void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXi &y) {
 	size_t num_examples = x.rows();
 	size_t num_features = x.cols();
 	theta_.setZero(num_features);

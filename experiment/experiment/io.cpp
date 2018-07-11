@@ -9,9 +9,10 @@ using std::pair;
 using std::string;
 using std::istreambuf_iterator;
 using Eigen::MatrixXd;
+using Eigen::VectorXi;
 using Eigen::VectorXd;
 
-pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
+pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 	std::ifstream file(kTrainFilePath);
 	string line;
 	std::vector<string> lines;
@@ -22,7 +23,7 @@ pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 	file.close();
 	size_t rows = lines.size();
 	MatrixXd x = MatrixXd::Zero(rows, kFeatureNumber + 1);
-	VectorXd y;
+	VectorXi y;
 	if (is_training) y.setZero(rows);
 	
  #pragma omp parallel for
@@ -33,7 +34,7 @@ pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 		int offset;
 		sscanf(data, "%d%n", &label, &offset);
 		data += offset;
-		if (is_training) y(row) = double(label);
+		if (is_training) y(row) = label;
 		int index;
 		double value;
 		x(row, 0) = 1.0;
@@ -44,10 +45,10 @@ pair<MatrixXd, VectorXd> ReadData(const char *path, bool is_training) {
 			x(row, index) = value;
 		}
 	}
-	return pair<MatrixXd, VectorXd>(std::move(x), std::move(y));
+	return pair<MatrixXd, VectorXi>(std::move(x), std::move(y));
 }
 
-pair<MatrixXd, VectorXd> TrainData() {
+pair<MatrixXd, VectorXi> TrainData() {
 	return ReadData(kTrainFilePath.c_str(), true);
 }
 
