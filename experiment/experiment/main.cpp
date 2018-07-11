@@ -8,20 +8,21 @@ using namespace std;
 using namespace Eigen;
 using namespace std::chrono;
 
-int main() {
-	logging::level(logging::Level::kDebug);
+int main(int argc, char *argv[]) {
+	auto arguments = ParseArguments(argc, argv);
+	logging::level(logging::Level::kInfo);
 	auto beacon = logging::CreateBeacon();
 
 	beacon = logging::CreateBeacon();
-	auto train = TrainData();
+	auto train = TrainData(arguments["train"]);
 	logging::LogTime(beacon, "loading train data");
 
 	beacon = logging::CreateBeacon();
-	auto test_x = TestData();
+	auto test_x = TestData(arguments["test"]);
 	logging::LogTime(beacon, "loading test data");
 
 	LogisticRegression lr;
-	lr.train_epochs(100);
+	lr.train_epochs(10);
 	lr.learning_rate(0.001);
 	lr.regularization_parameter(1);
 
@@ -37,9 +38,6 @@ int main() {
 	auto result = lr.PredictProbability(test_x);
 	logging::LogTime(beacon, "prediction");
 
-	//Eigen::ArrayXd accuracy = Eigen::ArrayXd(result - test.second).abs();
-	//logging::Info() << "accuracy: " << (accuracy < 0.5).count() / (accuracy.size() + 0.0);
-
-	SavePrediction(result);
+	SavePrediction(result, arguments["output"]);
 	return 0;
 }

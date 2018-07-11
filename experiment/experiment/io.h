@@ -1,12 +1,14 @@
 #pragma once
 #include<Eigen/Core>
 #include<utility>
+#include<map>
 
 const int kFeatureNumber = 201;
-const std::string kTrainFilePath = "D:/Andie/code/data-mining-course-project/homework2/dataset/train.txt";
-const std::string kTestFilePath = "D:/Andie/code/data-mining-course-project/homework2/dataset/t.txt";
-const std::string kTarget = "D:/Andie/code/data-mining-course-project/experiment/output.csv";
+const std::string kTrainFilePath = "train.txt";
+const std::string kTestFilePath = "test.txt";
+const std::string kTarget = "output.csv";
 
-std::pair<Eigen::MatrixXd, Eigen::VectorXi> TrainData();
-Eigen::MatrixXd TestData();
-void SavePrediction(const Eigen::VectorXd & prediction);
+std::pair<Eigen::MatrixXd, Eigen::VectorXi> TrainData(std::string path);
+Eigen::MatrixXd TestData(std::string path);
+void SavePrediction(const Eigen::VectorXd & prediction, std::string path);
+std::map<std::string, std::string> ParseArguments(int argc, char* argv[]);

@@ -5,8 +5,12 @@
 #include<streambuf>
 #include<omp.h>
 #include<vector>
+#include<iostream>
+using std::cerr;
+using std::cout;
 using std::pair;
 using std::string;
+using std::map;
 using std::istreambuf_iterator;
 using Eigen::MatrixXd;
 using Eigen::VectorXi;
@@ -18,7 +22,7 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 	std::vector<string> lines;
 	while (getline(file, line)) {
 		lines.push_back(move(line));
-		//if (lines.size() >= 15) break;
+		if (lines.size() >= 500000) break;
 	}
 	file.close();
 	size_t rows = lines.size();
@@ -48,21 +52,49 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 	return pair<MatrixXd, VectorXi>(std::move(x), std::move(y));
 }
 
-pair<MatrixXd, VectorXi> TrainData() {
-	return ReadData(kTrainFilePath.c_str(), true);
+pair<MatrixXd, VectorXi> TrainData(string path) {
+	return ReadData(path.c_str(), true);
 }
 
-MatrixXd TestData() {
-	return ReadData(kTestFilePath.c_str(), false).first;
+MatrixXd TestData(string path) {
+	return std::move(ReadData(path.c_str(), false).first);
 }
 
-void SavePrediction(const VectorXd & prediction) {
-	std::ofstream target(kTarget.c_str());
+void SavePrediction(const VectorXd & prediction, string path) {
+	std::ofstream target(path.c_str());
 	target << "id,label\n";
 	size_t rows = prediction.rows();
 	for (int i = 0; i < rows; i++) {
 		target << i << "," << prediction(i) << '\n';
 	}
 	target.close();
+}
+
+map<string, string> ParseArguments(int argc, char* argv[]) {
+	map<string, string> result = {
+		{ "train", kTrainFilePath },
+		{ "test", kTestFilePath },
+		{ "output", kTarget },
+	};
+	for (int i = 0; i < argc; i++) {
+		string arg(argv[i]);
+		if (arg == "--help") {
+			cout
+				<< "Usage: LR [--help]\n"
+				<< "          [--train train_file_path]\n"
+				<< "          [--test test_file_path]\n"
+				<< "          [--output output_file_path]\n";
+			exit(0);
+		}
+		if (arg == "--train" || arg == "--test" || arg == "output") {
+			if (i + 1 < argc) {
+				result[arg.substr(2)] = argv[i + 1];
+			} else {
+				cerr << arg << " option requires one argument.\n";
+				exit(1);
+			}
+		}
+	}
+	return result;
 }
 
