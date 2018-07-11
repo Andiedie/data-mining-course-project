@@ -5,24 +5,19 @@
 #include<streambuf>
 #include<omp.h>
 #include<vector>
-#include<iostream>
-using std::cerr;
-using std::cout;
 using std::pair;
 using std::string;
-using std::map;
 using std::istreambuf_iterator;
 using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
 
 pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
-	std::ifstream file(kTrainFilePath);
+	std::ifstream file(path);
 	string line;
 	std::vector<string> lines;
 	while (getline(file, line)) {
 		lines.push_back(move(line));
-		if (lines.size() >= 500000) break;
 	}
 	file.close();
 	size_t rows = lines.size();
@@ -69,32 +64,3 @@ void SavePrediction(const VectorXd & prediction, string path) {
 	}
 	target.close();
 }
-
-map<string, string> ParseArguments(int argc, char* argv[]) {
-	map<string, string> result = {
-		{ "train", kTrainFilePath },
-		{ "test", kTestFilePath },
-		{ "output", kTarget },
-	};
-	for (int i = 0; i < argc; i++) {
-		string arg(argv[i]);
-		if (arg == "--help") {
-			cout
-				<< "Usage: LR [--help]\n"
-				<< "          [--train train_file_path]\n"
-				<< "          [--test test_file_path]\n"
-				<< "          [--output output_file_path]\n";
-			exit(0);
-		}
-		if (arg == "--train" || arg == "--test" || arg == "output") {
-			if (i + 1 < argc) {
-				result[arg.substr(2)] = argv[i + 1];
-			} else {
-				cerr << arg << " option requires one argument.\n";
-				exit(1);
-			}
-		}
-	}
-	return result;
-}
-
