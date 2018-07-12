@@ -33,6 +33,7 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 		int offset;
 		sscanf(data, "%d%n", &label, &offset);
 		data += offset;
+		remain -= offset;
 		if (is_training) y(row) = label;
 		int index;
 		double value;
