@@ -20,6 +20,7 @@ public:
 
 	void SerialTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y);
 	void ParallelTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y);
+	void CacheUnfriendlyParallelTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y);
 
 	Eigen::VectorXd PredictProbability(Eigen::MatrixXd & x) const;
 private:

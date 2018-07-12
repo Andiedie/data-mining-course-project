@@ -96,6 +96,27 @@ void LogisticRegression::ParallelTrain(const MatrixXd &x, const VectorXi &y) {
 	}
 }
 
+void LogisticRegression::CacheUnfriendlyParallelTrain(const Eigen::MatrixXd & x, const Eigen::VectorXi & y) {
+	size_t num_examples = x.rows();
+	size_t num_features = x.cols();
+	theta_.setZero(num_features);
+
+#pragma omp parallel for
+	for (int epoch = 0; epoch < train_epochs_; epoch++) {
+		logging::Debug() << "serial training epoch " << epoch;
+		auto beacon = logging::CreateBeacon();
+		VectorXd gradient = VectorXd::Zero(num_features);
+		for (size_t i = 0; i < num_examples; i++) {
+			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
+			gradient += gradient_i;
+		}
+		regularize(gradient);
+		gradient *= 1.0 / num_examples;
+		theta_ -= learning_rate_ * gradient;
+		logging::LogTime(beacon, "training this epoch", logging::Level::kDebug);
+	}
+}
+
 VectorXd LogisticRegression::PredictProbability(MatrixXd &x) const {
 	VectorXd result = (x * theta_).unaryExpr(std::ptr_fun(LogisticRegression::Sigmoid));
 	return std::move(result);
