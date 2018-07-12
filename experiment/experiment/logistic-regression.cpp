@@ -98,6 +98,7 @@ void LogisticRegression::CacheUnfriendlyParallelTrain(const Eigen::MatrixXd & x,
 #pragma omp parallel for
 		for (int i = 0; i < num_examples; i++) {
 			auto gradient_i = (Sigmoid(x.row(i) * theta_) - y(i)) * x.row(i);
+#pragma omp critical
 			gradient += gradient_i;
 		}
 		regularize(gradient);
