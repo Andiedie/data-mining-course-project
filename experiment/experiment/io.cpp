@@ -12,7 +12,7 @@ using Eigen::MatrixXd;
 using Eigen::VectorXi;
 using Eigen::VectorXd;
 
-pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
+pair<MatrixXd, VectorXi> ReadData(const char *path) {
 	std::ifstream file(path);
 	string line;
 	std::vector<string> lines;
@@ -22,8 +22,7 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 	file.close();
 	size_t rows = lines.size();
 	MatrixXd x = MatrixXd::Zero(rows, kFeatureNumber + 1);
-	VectorXi y;
-	if (is_training) y.setZero(rows);
+	VectorXi y = VectorXi::Zero(rows);
 	
  #pragma omp parallel for
 	for (int row = 0; row < rows; row++) {
@@ -32,9 +31,9 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 		int label;
 		int offset;
 		sscanf(data, "%d%n", &label, &offset);
-		data += offset;
 		remain -= offset;
-		if (is_training) y(row) = label;
+		data += offset;
+		y(row) = label;
 		int index;
 		double value;
 		x(row, 0) = 1.0;
@@ -49,11 +48,11 @@ pair<MatrixXd, VectorXi> ReadData(const char *path, bool is_training) {
 }
 
 pair<MatrixXd, VectorXi> TrainData(string path) {
-	return ReadData(path.c_str(), true);
+	return ReadData(path.c_str());
 }
 
 MatrixXd TestData(string path) {
-	return std::move(ReadData(path.c_str(), false).first);
+	return std::move(ReadData(path.c_str()).first);
 }
 
 void SavePrediction(const VectorXd & prediction, string path) {
