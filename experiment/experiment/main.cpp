@@ -11,9 +11,9 @@ using namespace std::chrono;
 
 int main(int argc, char *argv[]) {
 	auto arguments = ParseArguments(argc, argv, {
-		Argument("train", "D:/Andie/code/data-mining-course-project/homework2/dataset/train.txt", "train_file_path"),
-		Argument("test", "D:/Andie/code/data-mining-course-project/homework2/dataset/test.txt", "test_file_path"),
-		Argument("output", "D:/Download/output.csv", "output_path"),
+		Argument("train", "train.txt", "train_file_path"),
+		Argument("test", "test.txt", "test_file_path"),
+		Argument("output", "output.csv", "output_path"),
 		Argument("epoch", "100", "train_epochs"),
 		Argument("learning_rate", "0.001", "learning_rate"),
 		Argument("regularization_parameter", "0", "regularization_parameter"),
