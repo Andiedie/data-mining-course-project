@@ -259,9 +259,13 @@ def resnet_model_fn(features, labels, mode, model_class,
         tf.identity(learning_rate, name='learning_rate')
         tf.summary.scalar('learning_rate', learning_rate)
 
-        optimizer = tf.train.MomentumOptimizer(
+        # optimizer = tf.train.MomentumOptimizer(
+        #     learning_rate=learning_rate,
+        #     momentum=momentum)
+
+        optimizer = tf.train.AdamOptimizer(
             learning_rate=learning_rate,
-            momentum=momentum)
+            epsilon=1e-08)
 
         # If we are running multi-GPU, we need to wrap the optimizer.
         if multi_gpu:
