@@ -67,10 +67,6 @@ python xgboost_.py
 |-|-|-|-|-|
 |AUC|0.80139|0.88573|0.39052|0.87256|
 
-| |AdaBoost|Naive Bayes|QDA|Linear SVM|
+| |AdaBoost|Naive Bayes|QDA|xgboost|
 |-|-|-|-|-|
-| |0.89531|0.73119|0.49650|-|
-
-| |RBF SVM|GBDT|xgboost|
-|-|-|-|-|
-| |-|-|0.90236|
+|AUC|0.89531|0.73119|0.49650|0.90236|
