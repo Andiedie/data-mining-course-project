@@ -4,3 +4,4 @@ This repository contains projects of the Data Mining course (instructor: Dr. Yan
 - [Homework1](https://github.com/Andiedie/data-mining-course-project/tree/master/homework1)
 - [Homework2](https://github.com/Andiedie/data-mining-course-project/tree/master/homework2)
 - [Homework3](https://github.com/Andiedie/data-mining-course-project/tree/master/homework3)
+- [Experiment](https://github.com/Andiedie/data-mining-course-project/tree/master/experiment)
